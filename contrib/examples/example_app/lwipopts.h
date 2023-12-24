@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (c) 2001-2003 Swedish Institute of Computer Science.
  * All rights reserved.
  *
@@ -36,30 +36,30 @@
 #include "lwipopts_test.h"
 #else /* LWIP_OPTTEST_FILE */
 
+
+//开启调试  cmake Debug时会自动定义
+//#define	LWIP_DEBUG
+
+#define LWIP_SINGLE_NETIF			1
+#define LWIP_ETHERNET              0
+
+//不检查校验码
+#define CHECKSUM_CHECK_IP			0
+#define CHECKSUM_CHECK_TCP			1
+#define CHECKSUM_CHECK_UDP			1
+
 #define LWIP_IPV4                  1
 #define LWIP_IPV6                  1
 
-#define NO_SYS                     0
+#define NO_SYS                     1
 #define LWIP_SOCKET                (NO_SYS==0)
 #define LWIP_NETCONN               (NO_SYS==0)
 #define LWIP_NETIF_API             (NO_SYS==0)
 
-#define LWIP_IGMP                  LWIP_IPV4
-#define LWIP_ICMP                  LWIP_IPV4
 
-#define LWIP_SNMP                  LWIP_UDP
-#define MIB2_STATS                 LWIP_SNMP
-#ifdef LWIP_HAVE_MBEDTLS
-#define LWIP_SNMP_V3               (LWIP_SNMP)
-#endif
-
-#define LWIP_DNS                   LWIP_UDP
-#define LWIP_MDNS_RESPONDER        LWIP_UDP
-
-#define LWIP_NUM_NETIF_CLIENT_DATA (LWIP_MDNS_RESPONDER)
-
-#define LWIP_HAVE_LOOPIF           1
-#define LWIP_NETIF_LOOPBACK        1
+//不使用LOOPBACK网卡
+#define LWIP_HAVE_LOOPIF           0
+#define LWIP_NETIF_LOOPBACK        0
 #define LWIP_LOOPBACK_MAX_PBUFS    10
 
 #define TCP_LISTEN_BACKLOG         1
@@ -70,39 +70,40 @@
 
 #define LWIP_TCPIP_CORE_LOCKING    1
 
-#define LWIP_NETIF_LINK_CALLBACK        1
-#define LWIP_NETIF_STATUS_CALLBACK      1
-#define LWIP_NETIF_EXT_STATUS_CALLBACK  1
+#define LWIP_NETIF_LINK_CALLBACK        0
+#define LWIP_NETIF_STATUS_CALLBACK      0
+#define LWIP_NETIF_EXT_STATUS_CALLBACK  0
+
 
 #ifdef LWIP_DEBUG
 
 #define LWIP_DBG_MIN_LEVEL         0
 #define PPP_DEBUG                  LWIP_DBG_OFF
-#define MEM_DEBUG                  LWIP_DBG_OFF
-#define MEMP_DEBUG                 LWIP_DBG_OFF
-#define PBUF_DEBUG                 LWIP_DBG_OFF
+#define MEM_DEBUG                  LWIP_DBG_ON
+#define MEMP_DEBUG                 LWIP_DBG_ON
+#define PBUF_DEBUG                 LWIP_DBG_ON
 #define API_LIB_DEBUG              LWIP_DBG_OFF
 #define API_MSG_DEBUG              LWIP_DBG_OFF
-#define TCPIP_DEBUG                LWIP_DBG_OFF
-#define NETIF_DEBUG                LWIP_DBG_OFF
+#define TCPIP_DEBUG                LWIP_DBG_ON
+#define NETIF_DEBUG                LWIP_DBG_ON
 #define SOCKETS_DEBUG              LWIP_DBG_OFF
 #define DNS_DEBUG                  LWIP_DBG_OFF
 #define AUTOIP_DEBUG               LWIP_DBG_OFF
 #define DHCP_DEBUG                 LWIP_DBG_OFF
-#define IP_DEBUG                   LWIP_DBG_OFF
+#define IP_DEBUG                   LWIP_DBG_ON
 #define IP_REASS_DEBUG             LWIP_DBG_OFF
 #define ICMP_DEBUG                 LWIP_DBG_OFF
 #define IGMP_DEBUG                 LWIP_DBG_OFF
 #define UDP_DEBUG                  LWIP_DBG_OFF
-#define TCP_DEBUG                  LWIP_DBG_OFF
-#define TCP_INPUT_DEBUG            LWIP_DBG_OFF
-#define TCP_OUTPUT_DEBUG           LWIP_DBG_OFF
-#define TCP_RTO_DEBUG              LWIP_DBG_OFF
-#define TCP_CWND_DEBUG             LWIP_DBG_OFF
-#define TCP_WND_DEBUG              LWIP_DBG_OFF
-#define TCP_FR_DEBUG               LWIP_DBG_OFF
-#define TCP_QLEN_DEBUG             LWIP_DBG_OFF
-#define TCP_RST_DEBUG              LWIP_DBG_OFF
+#define TCP_DEBUG                  LWIP_DBG_ON
+#define TCP_INPUT_DEBUG            LWIP_DBG_ON
+#define TCP_OUTPUT_DEBUG           LWIP_DBG_ON
+#define TCP_RTO_DEBUG              LWIP_DBG_ON
+#define TCP_CWND_DEBUG             LWIP_DBG_ON
+#define TCP_WND_DEBUG              LWIP_DBG_ON
+#define TCP_FR_DEBUG               LWIP_DBG_ON
+#define TCP_QLEN_DEBUG             LWIP_DBG_ON
+#define TCP_RST_DEBUG              LWIP_DBG_ON
 #endif
 
 #define LWIP_DBG_TYPES_ON         (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
@@ -118,7 +119,7 @@
 
 /* MEM_SIZE: the size of the heap memory. If the application will send
 a lot of data that needs to be copied, this should be set high. */
-#define MEM_SIZE               10240
+#define MEM_SIZE               1024*1024
 
 /* MEMP_NUM_PBUF: the number of memp struct pbufs. If the application
    sends a lot of data out of ROM (or other static memory), this
@@ -132,13 +133,13 @@ a lot of data that needs to be copied, this should be set high. */
 #define MEMP_NUM_UDP_PCB        8
 /* MEMP_NUM_TCP_PCB: the number of simultaneously active TCP
    connections. */
-#define MEMP_NUM_TCP_PCB        5
+#define MEMP_NUM_TCP_PCB        65535
 /* MEMP_NUM_TCP_PCB_LISTEN: the number of listening TCP
    connections. */
-#define MEMP_NUM_TCP_PCB_LISTEN 8
+#define MEMP_NUM_TCP_PCB_LISTEN 65535
 /* MEMP_NUM_TCP_SEG: the number of simultaneously queued TCP
    segments. */
-#define MEMP_NUM_TCP_SEG        16
+#define MEMP_NUM_TCP_SEG        65535
 /* MEMP_NUM_SYS_TIMEOUT: the number of simultaneously active
    timeouts. */
 #define MEMP_NUM_SYS_TIMEOUT    17
@@ -158,10 +159,10 @@ a lot of data that needs to be copied, this should be set high. */
 
 /* ---------- Pbuf options ---------- */
 /* PBUF_POOL_SIZE: the number of buffers in the pbuf pool. */
-#define PBUF_POOL_SIZE          120
+#define PBUF_POOL_SIZE          65535
 
 /* PBUF_POOL_BUFSIZE: the size of each pbuf in the pbuf pool. */
-#define PBUF_POOL_BUFSIZE       256
+#define PBUF_POOL_BUFSIZE       2048
 
 /** SYS_LIGHTWEIGHT_PROT
  * define SYS_LIGHTWEIGHT_PROT in lwipopts.h if you want inter-task protection
@@ -212,7 +213,9 @@ a lot of data that needs to be copied, this should be set high. */
 
 
 /* ---------- ARP options ---------- */
-#define LWIP_ARP                1
+
+//不处理ARP协议
+#define LWIP_ARP                0
 #define ARP_TABLE_SIZE          10
 #define ARP_QUEUEING            1
 
@@ -221,7 +224,7 @@ a lot of data that needs to be copied, this should be set high. */
 /* Define IP_FORWARD to 1 if you wish to have the ability to forward
    IP packets across network interfaces. If you are going to run lwIP
    on a device with only one network interface, define this to 0. */
-#define IP_FORWARD              1
+#define IP_FORWARD              0
 
 /* IP reassembly and segmentation.These are orthogonal even
  * if they both deal with IP fragments */
@@ -238,7 +241,7 @@ a lot of data that needs to be copied, this should be set high. */
 /* ---------- DHCP options ---------- */
 /* Define LWIP_DHCP to 1 if you want DHCP configuration of
    interfaces. */
-#define LWIP_DHCP               LWIP_UDP
+#define LWIP_DHCP               0
 
 /* 1 if you want to do an ARP check on the offered address
    (recommended). */
@@ -246,12 +249,12 @@ a lot of data that needs to be copied, this should be set high. */
 
 
 /* ---------- AUTOIP options ------- */
-#define LWIP_AUTOIP            (LWIP_DHCP)
+#define LWIP_AUTOIP            0
 #define LWIP_DHCP_AUTOIP_COOP  (LWIP_DHCP && LWIP_AUTOIP)
 
 
 /* ---------- UDP options ---------- */
-#define LWIP_UDP                1
+#define LWIP_UDP                0
 #define LWIP_UDPLITE            LWIP_UDP
 #define UDP_TTL                 255
 
@@ -259,6 +262,19 @@ a lot of data that needs to be copied, this should be set high. */
 /* ---------- RAW options ---------- */
 #define LWIP_RAW                1
 
+#define LWIP_IGMP                  0
+#define LWIP_ICMP                  0
+
+#define LWIP_SNMP                  LWIP_UDP
+#define MIB2_STATS                 LWIP_SNMP
+#ifdef LWIP_HAVE_MBEDTLS
+#define LWIP_SNMP_V3               (LWIP_SNMP)
+#endif
+
+#define LWIP_DNS                   LWIP_UDP
+#define LWIP_MDNS_RESPONDER        LWIP_UDP
+
+#define LWIP_NUM_NETIF_CLIENT_DATA (LWIP_MDNS_RESPONDER)
 
 /* ---------- Statistics options ---------- */
 
@@ -284,7 +300,7 @@ a lot of data that needs to be copied, this should be set high. */
 
 /* ---------- PPP options ---------- */
 
-#define PPP_SUPPORT             1      /* Set > 0 for PPP */
+#define PPP_SUPPORT             0      /* Set > 0 for PPP */
 
 #if PPP_SUPPORT
 
@@ -319,8 +335,8 @@ void sys_check_core_locking(void);
 
 #ifndef LWIP_PLATFORM_ASSERT
 /* Define LWIP_PLATFORM_ASSERT to something to catch missing stdio.h includes */
-void lwip_example_app_platform_assert(const char *msg, int line, const char *file);
-#define LWIP_PLATFORM_ASSERT(x) lwip_example_app_platform_assert(x, __LINE__, __FILE__)
+//void lwip_example_app_platform_assert(const char *msg, int line, const char *file);
+//#define LWIP_PLATFORM_ASSERT(x) lwip_example_app_platform_assert(x, __LINE__, __FILE__)
 #endif
 
 #endif /* LWIP_LWIPOPTS_H */

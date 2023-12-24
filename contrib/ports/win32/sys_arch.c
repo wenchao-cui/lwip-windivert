@@ -98,14 +98,15 @@ unsigned int
 lwip_port_rand(void)
 {
   u32_t ret;
+  if (hcrypt == 0) {
+      /* maybe CryptAcquireContext has not been called... */
+      sys_win_rand_init();
+  }
+
   if (CryptGenRandom(hcrypt, sizeof(ret), (BYTE*)&ret)) {
     return ret;
   }
-  /* maybe CryptAcquireContext has not been called... */
-  sys_win_rand_init();
-  if (CryptGenRandom(hcrypt, sizeof(ret), (BYTE*)&ret)) {
-    return ret;
-  }
+
   LWIP_ASSERT("CryptGenRandom failed", 0);
   return 0;
 }

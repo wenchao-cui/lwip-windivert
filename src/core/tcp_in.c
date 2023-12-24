@@ -323,7 +323,8 @@ tcp_input(struct pbuf *p, struct netif *inp)
         continue;
       }
 
-      if (lpcb->local_port == tcphdr->dest) {
+      int check_listen_port = 0;
+      if (check_listen_port ==0 || lpcb->local_port == tcphdr->dest) {
         if (IP_IS_ANY_TYPE_VAL(lpcb->local_ip)) {
           /* found an ANY TYPE (IPv4/IPv6) match */
 #if SO_REUSE

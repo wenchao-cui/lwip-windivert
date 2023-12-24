@@ -413,10 +413,18 @@ ip4_input_accept(struct netif *netif)
                          ip4_addr_get_u32(netif_ip4_addr(netif)) & ip4_addr_get_u32(netif_ip4_netmask(netif)),
                          ip4_addr_get_u32(ip4_current_dest_addr()) & ~ip4_addr_get_u32(netif_ip4_netmask(netif))));
 
+  // 接收所有的IP的包，不只是本地地址
+  int recv_all = 1;
+  u32_t src_ip = ip4_addr_get_u32(ip4_current_src_addr());
+  unsigned char *s = (unsigned char *)&src_ip;
+  u32_t dest_ip = ip4_addr_get_u32(ip4_current_dest_addr());
+  unsigned char *d = (unsigned char *)&dest_ip;
+  LWIP_DEBUGF(IP_DEBUG, ("ip_input: %d.%d.%d.%d -> %d.%d.%d.%d \n", s[0], s[1], s[2], s[3], d[0], d[1], d[2], d[3]));
+
   /* interface is up and configured? */
   if ((netif_is_up(netif)) && (!ip4_addr_isany_val(*netif_ip4_addr(netif)))) {
     /* unicast to this interface address? */
-    if (ip4_addr_eq(ip4_current_dest_addr(), netif_ip4_addr(netif)) ||
+    if ( recv_all || ip4_addr_eq(ip4_current_dest_addr(), netif_ip4_addr(netif)) ||
         /* or broadcast on this interface network address? */
         ip4_addr_isbroadcast(ip4_current_dest_addr(), netif)
 #if LWIP_NETIF_LOOPBACK && !LWIP_HAVE_LOOPIF
